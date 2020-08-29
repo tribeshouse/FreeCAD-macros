@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import FreeCAD
-#import PartDesign
-#import PartDesignGui
 import Spreadsheet
 import Draft
 import os
@@ -38,7 +36,6 @@ if repo.is_dirty():
 else:
     dirty=""
 
-#Gui.activateWorkbench("SpreadsheetWorkbench")
 sheet=doc.getObject('PartInfo')
 if not sheet:
     sheet=doc.addObject('Spreadsheet::Sheet','PartInfo')
