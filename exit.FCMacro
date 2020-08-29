@@ -1,0 +1,5 @@
+import FreeCAD as App
+import FreeCADGui as Gui
+
+App.ActiveDocument.restore()
+Gui.getMainWindow().close()

@@ -1,0 +1,91 @@
+import math
+import time
+import os
+import subprocess
+import glob
+from FreeCAD import Base
+from pivy import coin
+
+size=(1000,1000)
+doc = FreeCAD.ActiveDocument
+
+docDir, docFilename = os.path.split(doc.FileName)
+filePrefix = os.path.splitext(docFilename)[0]
+
+for o in doc.RootObjects:
+	if o.ViewObject.isVisible():
+		filePrefix=filePrefix+'-'+o.Label.split('[')[0]
+
+dirname = os.path.join(docDir, 'img/', filePrefix)
+
+steps=36
+angle=2*math.pi/steps
+
+matX=Base.Matrix()
+matX.rotateX(angle)
+stepsX=Base.Placement(matX).Rotation
+
+matY=Base.Matrix()
+matY.rotateY(angle)
+stepsY=Base.Placement(matY).Rotation
+
+matZ=Base.Matrix()
+matZ.rotateZ(angle)
+stepsZ=Base.Placement(matZ).Rotation
+
+view=Gui.ActiveDocument.ActiveView
+cam=view.getCameraNode()
+rotCamera=Base.Rotation(*cam.orientation.getValue().getValue())
+
+# this sets the lookat point to the center of circumsphere of the global bounding box
+view.fitAll()
+
+# the camera's position, i.e. the user's eye point
+position=Base.Vector(*cam.position.getValue().getValue())
+distance=cam.focalDistance.getValue()
+
+# view direction
+vec=rotCamera.multVec(Base.Vector(0,0,-1))
+
+# this is the point on the screen the camera looks at
+# when rotating the camera we should make this point fix
+lookat=position+vec*distance
+
+# around x axis
+for i in range(steps):
+    rotCamera=stepsX.multiply(rotCamera)
+    cam.orientation.setValue(*rotCamera.Q)
+    vec=rotCamera.multVec(Base.Vector(0,0,-1))
+    pos=lookat-vec*distance
+    cam.position.setValue(pos.x,pos.y,pos.z)
+    Gui.updateGui()
+    time.sleep(0.3)
+    view.saveImage(dirname+"-x-" + '{:02d}'.format(i) + ".png",*size)
+subprocess.call("convert " + dirname + "-x-*.png " + dirname + "-x.gif",shell=True)
+subprocess.call("rm " + dirname + "-x-*.png",shell=True)
+
+# around y axis
+for i in range(steps):
+    rotCamera=stepsY.multiply(rotCamera)
+    cam.orientation.setValue(*rotCamera.Q)
+    vec=rotCamera.multVec(Base.Vector(0,0,-1))
+    pos=lookat-vec*distance
+    cam.position.setValue(pos.x,pos.y,pos.z)
+    Gui.updateGui()
+    time.sleep(0.3)
+    view.saveImage(dirname+"-y-" + '{:02d}'.format(i) + ".png",*size)
+subprocess.call("convert " + dirname + "-y-*.png " + dirname + "-y.gif",shell=True)
+subprocess.call("rm " + dirname + "-y-*.png",shell=True)
+
+# around z axis
+for i in range(steps):
+    rotCamera=stepsZ.multiply(rotCamera)
+    cam.orientation.setValue(*rotCamera.Q)
+    vec=rotCamera.multVec(Base.Vector(0,0,-1))
+    pos=lookat-vec*distance
+    cam.position.setValue(pos.x,pos.y,pos.z)
+    Gui.updateGui()
+    time.sleep(0.3)
+    view.saveImage(dirname+"-z-" + '{:02d}'.format(i) + ".png",*size)
+subprocess.call("convert " + dirname + "-z-*.png " + dirname + "-z.gif",shell=True)
+subprocess.call("rm " + dirname + "-z-*.png",shell=True)

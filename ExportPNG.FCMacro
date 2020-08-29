@@ -1,0 +1,30 @@
+import os
+from datetime import datetime
+
+def exportViewToPNG():
+    '''Exports the current view to a PNG suitable for printing on A4 or Letter.
+       The filename will be e.g. MyProject-view.png in the project directory.'''
+    # Reference: http://www.freecadweb.org/wiki/index.php?title=Std_ViewScreenShot
+
+    # Create an image which fits on an A4 or Letter page at 300dpi, landscape
+    width = 11 * 300    # inside letter
+    height = int(8.26 * 300) # inside A4
+
+    doc = FreeCAD.ActiveDocument
+
+    if not doc.FileName:
+        FreeCAD.Console.PrintError('Must save project first\n')
+        return
+
+    docDir, docFilename = os.path.split(doc.FileName)
+
+    filePrefix = os.path.splitext(docFilename)[0]
+    dt=datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+    filename = filePrefix + '-' + dt + '.png'
+    filePath = os.path.join(docDir, 'img/', filename)
+
+    FreeCAD.Console.PrintMessage("Saving view to %s\n" % filePath)
+    FreeCADGui.ActiveDocument.ActiveView.saveImage(filePath.encode("utf-8"), width, height, 'White')
+
+exportViewToPNG()
