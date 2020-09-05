@@ -8,7 +8,7 @@ import re
 import time
 from git import Repo
 
-FontFile="/usr/share/fonts/blackout/Blackout Midnight.ttf"
+FontFile=os.path.dirname(os.path.realpath(__file__))+"/blackout-font/Blackout Midnight.ttf"
 Size=3
 Tracking=1.5
 Scale=0.3
