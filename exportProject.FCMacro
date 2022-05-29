@@ -15,6 +15,8 @@ import sys, os
 import re
 import time
 
+macropath = "/home/user/.FreeCAD/Macro/FreeCAD-macros"
+
 partTypeRegex = re.compile(r'^(.*)\[([,\w]+)\].*$')
 
 sys.path.insert(0, '/usr/lib/freecad/lib/')
@@ -66,6 +68,26 @@ def exportStep(objs, p):
     for o in objs:
         shape = o.Shape
         shape.exportStep(p)
+def exportGif(objs, p):
+    # Dummy for gif export, exports visible part to generic file
+    doc = FreeCAD.ActiveDocument
+
+    if not doc.FileName:
+        FreeCAD.Console.PrintError('Must save project first\n')
+        return
+    for o in doc.RootObjects:                               # hide all root objects
+        FreeCADGui.ActiveDocument.getObject(o.Name).Visibility = False
+
+    for o in objs:
+        print(o.Name)
+        FreeCADGui.ActiveDocument.getObject(o.Name).Visibility = True
+
+        FreeCADGui.ActiveDocument.ActiveView.fitAll()
+        Gui.updateGui()
+        time.sleep(0.5)
+        FreeCAD.Console.PrintMessage("Saving gif")
+        exec(open(macropath + "/exportGif.FCMacro").read())
+        FreeCADGui.ActiveDocument.getObject(o.Name).Visibility = False
 
 # TODO: support CAM and post-processors like: rml, spb
 supportedTypes = {
@@ -75,6 +97,7 @@ supportedTypes = {
     'dxf': exportDxf,
     'scad': exportCSG.export,
     'png': exportViewToPNG,
+    'gif': exportGif,
 }
 
 def extractTypes(label):

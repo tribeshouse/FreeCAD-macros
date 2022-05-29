@@ -10,6 +10,7 @@ from git import Repo
 
 FontFile=os.path.dirname(os.path.realpath(__file__))+"/blackout-font/Blackout Midnight.ttf"
 Size=3
+Spacing=4
 Tracking=1.5
 Scale=0.3
 
@@ -85,41 +86,41 @@ plm.Base=FreeCAD.Vector(0.0,0.0,0.0)
 ss1.Placement=plm
 ss1.Support=None
 Draft.autogroup(ss1)
-sss1=Draft.scale([ss1],delta=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False,legacy=False)
+sss1=Draft.scale([ss1],scale=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False)
 sss1.Placement=plm
-doc.removeObject(ss1.Name)
+#doc.removeObject(ss1.Name)
 
 ss2=Draft.makeShapeString(String=remote,FontFile=FontFile,Size=Size,Tracking=Tracking)
-plm.Base=FreeCAD.Vector(0.0,-Size*1.2,0.0)
+plm.Base=FreeCAD.Vector(0.0,-Size*Spacing,0.0)
 ss2.Placement=plm
 ss2.Support=None
 Draft.autogroup(ss2)
-sss2=Draft.scale([ss2],delta=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False,legacy=False)
+sss2=Draft.scale([ss2],scale=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False)
 sss2.Placement=plm
-doc.removeObject(ss2.Name)
+#doc.removeObject(ss2.Name)
 
 ss3=Draft.makeShapeString(String=branch + dirty,FontFile=FontFile,Size=Size,Tracking=Tracking)
-plm.Base=FreeCAD.Vector(0.0,-Size*2.4,0.0)
+plm.Base=FreeCAD.Vector(0.0,-Size*Spacing*2.0,0.0)
 ss3.Placement=plm
 ss3.Support=None
 Draft.autogroup(ss3)
-sss3=Draft.scale([ss3],delta=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False,legacy=False)
+sss3=Draft.scale([ss3],scale=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False)
 sss3.Placement=plm
-doc.removeObject(ss3.Name)
+#doc.removeObject(ss3.Name)
 
 ss4=Draft.makeShapeString(String=rev + " " + date,FontFile=FontFile,Size=Size,Tracking=Tracking)
-plm.Base=FreeCAD.Vector(0.0,-Size*3.6,0.0)
+plm.Base=FreeCAD.Vector(0.0,-Size*Spacing*3.0,0.0)
 ss4.Placement=plm
 ss4.Support=None
 Draft.autogroup(ss4)
-sss4=Draft.scale([ss4],delta=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False,legacy=False)
+sss4=Draft.scale([ss4],scale=scale,center=FreeCAD.Vector(0.0,0.0,0.0),copy=False)
 sss4.Placement=plm
-doc.removeObject(ss4.Name)
+#doc.removeObject(ss4.Name)
 
 if doc.getObject("PartInfoBaseSketch"):
     doc.removeObject("PartInfoBaseSketch")
 
-pis=Draft.makeSketch([sss1,sss2,sss3,sss4],delete=True,name="PartInfoBaseSketch")
+pis=Draft.makeSketch([sss1,sss2,sss3,sss4],name="PartInfoBaseSketch")
 
 for obj in doc.findObjects('Sketcher::SketchObject'):
     if re.search("^PartInfoSketch.*",obj.Label):

@@ -1,3 +1,4 @@
+from ast import If
 import math
 import time
 import os
@@ -13,10 +14,15 @@ docDir, docFilename = os.path.split(doc.FileName)
 filePrefix = os.path.splitext(docFilename)[0]
 
 for o in doc.RootObjects:
-	if o.ViewObject.isVisible():
-		filePrefix=filePrefix+'-'+o.Label.split('[')[0]
+    if o.ViewObject.isVisible():
+        filePrefix=filePrefix+'-'+o.Label.split('[')[0]
+        break
 
-dirname = os.path.join(docDir, 'img/', filePrefix)
+gifdir = "gif/"
+if not os.path.exists(gifdir):
+  os.makedirs(gifdir)
+
+filename = os.path.join(docDir, 'gif/', filePrefix)
 
 steps=36
 angle=2*math.pi/steps
@@ -60,9 +66,9 @@ for i in range(steps):
     cam.position.setValue(pos.x,pos.y,pos.z)
     Gui.updateGui()
     time.sleep(0.3)
-    view.saveImage(dirname+"-x-" + '{:02d}'.format(i) + ".png",*size)
-subprocess.call("convert " + dirname + "-x-*.png " + dirname + "-x.gif",shell=True)
-subprocess.call("rm " + dirname + "-x-*.png",shell=True)
+    view.saveImage(filename+"-x-" + '{:02d}'.format(i) + ".png",*size)
+if subprocess.call("convert " + filename + "-x-*.png " + filename + "-x.gif",shell=True) == 0:
+    subprocess.call("rm " + filename + "-x-*.png",shell=True)
 
 # around y axis
 for i in range(steps):
@@ -73,9 +79,9 @@ for i in range(steps):
     cam.position.setValue(pos.x,pos.y,pos.z)
     Gui.updateGui()
     time.sleep(0.3)
-    view.saveImage(dirname+"-y-" + '{:02d}'.format(i) + ".png",*size)
-subprocess.call("convert " + dirname + "-y-*.png " + dirname + "-y.gif",shell=True)
-subprocess.call("rm " + dirname + "-y-*.png",shell=True)
+    view.saveImage(filename+"-y-" + '{:02d}'.format(i) + ".png",*size)
+if subprocess.call("convert " + filename + "-y-*.png " + filename + "-y.gif",shell=True) == 0:
+    subprocess.call("rm " + filename + "-y-*.png",shell=True)
 
 # around z axis
 for i in range(steps):
@@ -86,6 +92,6 @@ for i in range(steps):
     cam.position.setValue(pos.x,pos.y,pos.z)
     Gui.updateGui()
     time.sleep(0.3)
-    view.saveImage(dirname+"-z-" + '{:02d}'.format(i) + ".png",*size)
-subprocess.call("convert " + dirname + "-z-*.png " + dirname + "-z.gif",shell=True)
-subprocess.call("rm " + dirname + "-z-*.png",shell=True)
+    view.saveImage(filename+"-z-" + '{:02d}'.format(i) + ".png",*size)
+if subprocess.call("convert " + filename + "-z-*.png " + filename + "-z.gif",shell=True) == 0:
+    subprocess.call("rm " + filename + "-z-*.png",shell=True)
